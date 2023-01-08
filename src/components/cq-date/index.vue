@@ -145,7 +145,8 @@ export default {
       let start = document.querySelector(
         `.${dateComponentClass} .${dateComponentClass}-start`
       );
-      if (start) end.classList.remove(`${dateComponentClass}-start`);
+
+      if (start) start.classList.remove(`${dateComponentClass}-start`);
 
       let days = document.querySelectorAll(
         `.cq-card-date-${this.id} .${dateComponentClass} .q-date__event`
@@ -210,6 +211,9 @@ export default {
   }
   .cq-date__range {
     background-color: #f5f5f5;
+    .q-date__event {
+      background-color: transparent !important;
+    }
   }
   .cq-card-date--to-start {
     &::before {
