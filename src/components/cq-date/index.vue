@@ -23,7 +23,7 @@
           <div>
             <div class="row">
               <div class="col-12 col-md-6">
-                <div class="q-pa-md-sm">
+                <div class="q-pa-md-sm row justify-center">
                   <q-date
                     class="cq-card-date--from"
                     v-model="range.from"
@@ -36,7 +36,7 @@
                 </div>
               </div>
               <div class="col-12 col-md-6">
-                <div class="q-pa-md-sm">
+                <div class="q-pa-md-sm row justify-center">
                   <q-date
                     flat
                     class="cq-card-date--to"
@@ -91,7 +91,7 @@ export default {
     dialog(value) {
       console.log(value);
       if (value) {
-        this.range = this.value;
+        this.range = { ...this.value };
       }
     }
   },
@@ -119,8 +119,8 @@ export default {
       this.dialog = false;
     },
     cancel() {
+      this.range = {};
       this.dialog = false;
-      this.range = { from: "", to: "" };
     },
     eventsFn(date) {
       setTimeout(() => {
