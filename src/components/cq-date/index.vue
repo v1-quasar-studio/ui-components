@@ -16,15 +16,19 @@
               <q-icon color="black" :size="'sm'" name="mdi-calendar-blank" />
             </q-btn>
             <div class="q-mx-sm text-weight-bold">Report Period</div>
+            <div v-if="error" class="q-mx-sm text-red">
+              End date in period can't be before start date !
+            </div>
           </div>
           <div>
             <div class="row">
               <div class="col-12 col-md-6">
-                <div class="q-pa-sm">
+                <div class="q-pa-md-sm">
                   <q-date
                     class="cq-card-date--from"
-                    v-model="from"
+                    v-model="range.from"
                     minimal
+                    flat
                     color="black"
                     :events="eventsFn"
                   >
@@ -32,10 +36,11 @@
                 </div>
               </div>
               <div class="col-12 col-md-6">
-                <div class="q-pa-sm">
+                <div class="q-pa-md-sm">
                   <q-date
+                    flat
                     class="cq-card-date--to"
-                    v-model="to"
+                    v-model="range.to"
                     minimal
                     color="black"
                     :events="eventsFn"
@@ -60,6 +65,7 @@
             <div style="margin-inline: 8px"></div>
             <div class="col">
               <q-btn
+                :disable="error"
                 color="black"
                 unelevated
                 @click="save()"
@@ -89,16 +95,7 @@ export default {
       }
     }
   },
-  computed: {
-    // range: {
-    //   get() {
-    //       return this.value
-    //   },
-    //   set(value) {
-    //       this.$emit('input',value)
-    //     }
-    //   }
-  },
+
   data() {
     return {
       id: "",
@@ -107,6 +104,11 @@ export default {
       from: "2023/01/01",
       to: "2023/01/04"
     };
+  },
+  computed: {
+    error() {
+      return this.range.from > this.range.to ? true : false;
+    }
   },
   methods: {
     open() {
@@ -128,7 +130,7 @@ export default {
         this.colored("cq-card-date--from");
       }, 1);
 
-      return date >= this.from && date <= this.to;
+      return date >= this.range.from && date <= this.range.to;
     },
     colored(dateComponentClass) {
       document
@@ -209,11 +211,11 @@ export default {
   .cq-card-date--button {
     border-radius: 8px;
   }
+  .q-date__event {
+    background-color: transparent !important;
+  }
   .cq-date__range {
     background-color: #f5f5f5;
-    .q-date__event {
-      background-color: transparent !important;
-    }
   }
   .cq-card-date--to-start {
     &::before {
