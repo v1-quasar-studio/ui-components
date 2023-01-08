@@ -4,7 +4,7 @@
       <slot name="default" :on="{ open }"></slot>
     </div>
     <q-dialog v-model="dialog">
-      <div class="cq-card-date">
+      <div class="cq-card-date" :class="[`cq-card-date-${id}`]">
         <div class="cq-card-date--section">
           <div class="row items-center">
             <q-btn
@@ -18,38 +18,29 @@
             <div class="q-mx-sm text-weight-bold">Report Period</div>
           </div>
           <div>
-            <div
-              class="c-flex c-flex-column c-justify-space-between c-flex-lg-row"
-            >
-              <div class="c-w-lg-50">
-                <div class="column wrap justify-center full-height q-px-lg">
-                  <div class="q-mb-sm">
-                    <q-input
-                      label="from"
-                      color="black"
-                      outline
-                      v-model="range.from"
-                    ></q-input>
-                  </div>
-                  <div>
-                    <q-input
-                      label="to"
-                      color="black"
-                      outline
-                      v-model="range.to"
-                    ></q-input>
-                  </div>
-                </div>
-              </div>
-              <div class="">
-                <div>
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="q-pa-sm">
                   <q-date
-                    flat
+                    class="cq-card-date--from"
+                    v-model="from"
                     minimal
                     color="black"
-                    range
-                    v-model="range"
-                  ></q-date>
+                    :events="eventsFn"
+                  >
+                  </q-date>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="q-pa-sm">
+                  <q-date
+                    class="cq-card-date--to"
+                    v-model="to"
+                    minimal
+                    color="black"
+                    :events="eventsFn"
+                  >
+                  </q-date>
                 </div>
               </div>
             </div>
@@ -110,8 +101,11 @@ export default {
   },
   data() {
     return {
+      id: "",
       dialog: false,
-      range: { from: "", to: "" }
+      range: { from: "", to: "" },
+      from: "2023/01/01",
+      to: "2023/01/04"
     };
   },
   methods: {
@@ -125,15 +119,76 @@ export default {
     cancel() {
       this.dialog = false;
       this.range = { from: "", to: "" };
+    },
+    eventsFn(date) {
+      setTimeout(() => {
+        this.colored("cq-card-date--to");
+      }, 0);
+      setTimeout(() => {
+        this.colored("cq-card-date--from");
+      }, 1);
+
+      return date >= this.from && date <= this.to;
+    },
+    colored(dateComponentClass) {
+      document
+        .querySelectorAll(
+          `.cq-card-date-${this.id} .${dateComponentClass} .cq-date__range`
+        )
+        .forEach((el) => {
+          el.classList.remove("cq-date__range");
+        });
+      let end = document.querySelector(
+        `.${dateComponentClass} .${dateComponentClass}-end`
+      );
+      if (end) end.classList.remove(`${dateComponentClass}-end`);
+      let start = document.querySelector(
+        `.${dateComponentClass} .${dateComponentClass}-start`
+      );
+      if (start) end.classList.remove(`${dateComponentClass}-start`);
+
+      let days = document.querySelectorAll(
+        `.cq-card-date-${this.id} .${dateComponentClass} .q-date__event`
+      );
+      days.forEach((el) => {
+        el.parentElement.parentElement.parentElement.parentElement.classList.add(
+          "cq-date__range"
+        );
+      });
+      //
+      days[0].parentElement.parentElement.parentElement.parentElement.classList.remove(
+        "cq-date__range"
+      );
+      days[0].parentElement.parentElement.parentElement.parentElement.classList.add(
+        `${dateComponentClass}-start`
+      );
+
+      days[
+        days.length - 1
+      ].parentElement.parentElement.parentElement.parentElement.classList.remove(
+        "cq-date__range"
+      );
+      days[
+        days.length - 1
+      ].parentElement.parentElement.parentElement.parentElement.classList.add(
+        `${dateComponentClass}-end`
+      );
+
+      //
     }
+  },
+  mounted() {
+    this.id = this._uid;
   }
 };
 </script>
 
 <style lang="scss">
-.cq-card-date {
-  width: 900px;
+.q-dialog__inner--minimized > div.cq-card-date {
+  width: fit-content;
   max-width: 90vw;
+}
+.cq-card-date {
   border-radius: 14px !important;
 
   .cq-card-date--section {
@@ -152,6 +207,66 @@ export default {
   }
   .cq-card-date--button {
     border-radius: 8px;
+  }
+  .cq-date__range {
+    background-color: #f5f5f5;
+  }
+  .cq-card-date--to-start {
+    &::before {
+      width: 45%;
+      content: "";
+      background-color: #f5f5f5;
+      top: 0px;
+      bottom: 0px;
+      position: absolute;
+      width: 50%;
+      right: 0;
+      left: auto;
+    }
+
+    .q-btn {
+      background-color: #f5f5f5;
+    }
+  }
+  .cq-card-date--from-end {
+    &::before {
+      width: 45%;
+      content: "";
+      background-color: #f5f5f5;
+      top: 0px;
+      bottom: 0px;
+      position: absolute;
+      width: 50%;
+      left: 0;
+      right: auto;
+    }
+
+    .q-btn {
+      background-color: #f5f5f5;
+    }
+  }
+  .cq-card-date--from-start {
+    &::before {
+      content: "";
+      background-color: #f5f5f5;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      left: 50%;
+    }
+  }
+  .cq-card-date--to-end {
+    &::before {
+      content: "";
+      background-color: #f5f5f5;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 50%;
+    }
   }
 }
 </style>
