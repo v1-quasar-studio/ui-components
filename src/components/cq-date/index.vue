@@ -44,6 +44,7 @@
                     minimal
                     color="black"
                     :events="eventsFn"
+                    :options="toLimit"
                   >
                   </q-date>
                 </div>
@@ -131,6 +132,9 @@ export default {
       }, 1);
 
       return date >= this.range.from && date <= this.range.to;
+    },
+    toLimit(date) {
+      return date > this.range.from;
     },
     colored(dateComponentClass) {
       document
