@@ -134,7 +134,7 @@ export default {
       return date >= this.range.from && date <= this.range.to;
     },
     toLimit(date) {
-      return date > this.range.from;
+      return date >= this.range.from;
     },
     colored(dateComponentClass) {
       document
