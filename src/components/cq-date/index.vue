@@ -111,6 +111,13 @@ export default {
       return this.range.from > this.range.to ? true : false;
     }
   },
+  watch: {
+    error(value) {
+      if (value) {
+        this.range.to = null;
+      }
+    }
+  },
   methods: {
     open() {
       this.dialog = true;
@@ -134,7 +141,7 @@ export default {
       return date >= this.range.from && date <= this.range.to;
     },
     toLimit(date) {
-      return date >= this.range.from;
+      return date >= this.range.from && this.range.from ? true : false;
     },
     colored(dateComponentClass) {
       document
